@@ -14,6 +14,13 @@ import random
 import plotly.graph_objects as go
 import plotly.express as px
 
+# Vercel Entrypoint (Serverless Dummy)
+def app(environ, start_response):
+    status = '200 OK'
+    response_headers = [('Content-type', 'text/plain')]
+    start_response(status, response_headers)
+    return [b"Streamlit App Entrypoint"]
+
 # Initialize NLTK resources
 try:
     nltk.data.find('corpora/stopwords')
@@ -72,6 +79,23 @@ st.markdown("""
         font-weight: 800 !important;
     }
     
+    /* MOBILE OPTIMIZATIONS (FIXES MISSING UPLOAD SEGMENT) */
+    @media (max-width: 768px) {
+        .glass-card { 
+            padding: 15px !important; 
+            margin-bottom: 15px !important; 
+        }
+        [data-testid="stMetricValue"] { font-size: 1.8rem !important; }
+        h1 { font-size: 2.2rem !important; }
+        .stButton>button { 
+            padding: 10px 15px !important; 
+            font-size: 0.8rem !important; 
+            margin-bottom: 10px;
+        }
+        .audit-card-body { flex-direction: column !important; }
+        .audit-card-det { padding-left: 0 !important; border-left: none !important; margin-top: 15px; }
+    }
+
     /* BUTTONS */
     .stButton>button {
         background: linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%) !important;
@@ -385,11 +409,21 @@ if 'results' not in st.session_state:
     st.session_state.results = None
 
 with st.sidebar:
+    st.markdown("""
+    <div class='glass-card' style='padding:15px; text-align:center;'>
+        <h2 style='margin:0; font-size:1.2rem;'>System v3.5</h2>
+        <p style='font-size:0.8rem; color:#60a5fa;'>Expert Intelligence Active</p>
+        <div style='background:rgba(0,255,136,0.1); color:#00ff88; border:1px solid #00ff88; border-radius:10px; padding:5px; font-size:0.7rem;'>
+            ● LIVE AUDIT READY
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
     st.title("🛡️ Navigator")
     if st.button("🏠 Home", key="home_btn"): st.session_state.page = 'Home'
     if st.button("🔍 Detector", key="det_btn"): st.session_state.page = 'Detector'
     st.markdown("---")
-    st.write("v2.0 HD Glass Edition")
+    st.write("v3.5 Gold Edition")
 
 # --- PAGE: HOME ---
 if st.session_state.page == 'Home':
@@ -692,19 +726,19 @@ elif st.session_state.page == 'Detector':
             
             st.markdown(f"""
             <div class="glass-card">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="audit-card-header" style="display: flex; justify-content: space-between; align-items: center;">
                     <b>Analysis ID: EX-{idx+1024}</b>
                     {badge}
                 </div>
                 <hr style="opacity: 0.1">
                 <p style="font-size: 0.9rem; color: #ccc;">"{row['Text']}"</p>
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; align-items: flex-start;">
+                <div class="audit-card-body" style="display: flex; justify-content: space-between; font-size: 0.8rem; align-items: flex-start;">
                     <div style="flex: 1;">
                         <p><b>Rating:</b> {stars} ({row['Rating']}/5)</p>
                         <p><b>Sentiment:</b> <span style="color:#60a5fa">{sentiment_tag}</span></p>
                         <p><b>Suspicious Signal:</b> <span style="color:#f87171">{susp_signal}</span></p>
                     </div>
-                    <div style="flex: 2; color: #a5b4fc; padding-left: 20px; border-left: 1px solid rgba(255,255,255,0.05);">
+                    <div class="audit-card-det" style="flex: 2; color: #a5b4fc; padding-left: 20px; border-left: 1px solid rgba(255,255,255,0.05);">
                         <b>Expert Audit Reasons:</b>
                         <ul style="margin-top: 5px; margin-bottom: 0; padding-left: 15px;">
                             {reason_pts}
